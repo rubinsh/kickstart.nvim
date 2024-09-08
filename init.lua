@@ -331,7 +331,7 @@ require('lazy').setup({
       workspaces = {
         {
           name = 'personal',
-          path = '/mnt/c/Users/rubin/Obsidian/Rubinsh/',
+          path = os.getenv 'OBSIDIAN_VAULT_PATH',
         },
       },
 
