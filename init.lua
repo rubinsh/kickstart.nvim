@@ -657,6 +657,15 @@ require('lazy').setup({
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
+      -- Function to get the Python path from the active pyenv virtual environment
+      local function get_python_path()
+        -- Use the `pyenv which python` command to get the path
+        local handle = io.popen 'pyenv which python'
+        local result = handle:read '*a'
+        handle:close()
+        -- Remove any trailing newline characters
+        return result:gsub('%s+', '')
+      end
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
@@ -669,7 +678,13 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {
+          settings = {
+            python = {
+              pythonPath = get_python_path(),
+            },
+          },
+        },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
