@@ -451,6 +451,14 @@ require('lazy').setup({
         --   },
         -- },
         -- pickers = {}
+        defaults = {
+          path_display = { 'smart', 'absolute' },
+        },
+        pickers = {
+          lsp_references = {
+            path_display = { 'tail' },
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
