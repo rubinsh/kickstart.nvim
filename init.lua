@@ -283,6 +283,7 @@ require('lazy').setup({
     },
     opts = {
       debug = false, -- Enable debugging
+      model = 'gpt-4o-2024-08-06',
       -- See Configuration section for rest
     },
     -- See Commands section for default commands if you want to lazy load on them
