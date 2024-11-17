@@ -453,7 +453,14 @@ require('lazy').setup({
         -- },
         -- pickers = {}
         defaults = {
-          path_display = { 'smart', 'absolute' },
+          path_display = { 'absolute' },
+          wrap_results = true,
+          layout_strategy = 'vertical',
+          sorting_strategy = 'ascending',
+          layout_config = {
+            prompt_position = 'top',
+            mirror = true,
+          },
         },
         pickers = {
           lsp_references = {
