@@ -462,6 +462,8 @@ require('lazy').setup({
             prompt_position = 'top',
             mirror = true,
           },
+          path_display = { 'absolute' },
+          file_ignore_patterns = { 'node_modules', '.git', 'dist', 'logdir' },
         },
         pickers = {
           lsp_references = {
