@@ -172,6 +172,9 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Use jj to escape from insert mode
+vim.keymap.set('i', 'jj', '<Esc>', { noremap = true })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -676,15 +679,6 @@ require('lazy').setup({
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-      -- Function to get the Python path from the active pyenv virtual environment
-      local function get_python_path()
-        -- Use the `pyenv which python` command to get the path
-        local handle = io.popen 'pyenv which python'
-        local result = handle:read '*a'
-        handle:close()
-        -- Remove any trailing newline characters
-        return result:gsub('%s+', '')
-      end
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
@@ -697,13 +691,40 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        pyright = {
+        -- pyright = {
+        --   settings = {
+        --     python = {
+        --       pythonPath = get_python_path(),
+        --     },
+        --   },
+        -- },
+        pylsp = {
           settings = {
-            python = {
-              pythonPath = get_python_path(),
+            pylsp = {
+              plugins = {
+                pycodestyle = {
+                  enabled = true,
+                  ignore = { 'W391' },
+                  maxLineLength = 120,
+                },
+                pyls_mypy = {
+                  enabled = true,
+                  live_mode = false,
+                },
+                pyls_isort = {
+                  enabled = true,
+                },
+                pyls_black = {
+                  enabled = true,
+                },
+                pyls_flake8 = {
+                  enabled = false,
+                },
+              },
             },
           },
         },
+
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -785,7 +806,7 @@ require('lazy').setup({
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true }
-        local enable_filetypes = { lua = true }
+        local enable_filetypes = { lua = true, python = true }
         return {
           timeout_ms = 500,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype] and enable_filetypes[vim.bo[bufnr].filetype],
