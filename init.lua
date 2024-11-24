@@ -198,6 +198,9 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Add the key mapping for toggling nvim-tree
+vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<CR>', { desc = '[T]oggle Nvim [T]ree' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -476,7 +479,6 @@ require('lazy').setup({
             prompt_position = 'top',
             mirror = true,
           },
-          path_display = { 'absolute' },
           file_ignore_patterns = { 'node_modules', '.git', 'dist', 'logdir' },
         },
         pickers = {
@@ -715,7 +717,7 @@ require('lazy').setup({
               plugins = {
                 pycodestyle = {
                   enabled = true,
-                  ignore = { 'W391', 'E402' },
+                  ignore = { 'W391', 'E402', 'E711' },
                   maxLineLength = 120,
                 },
                 pyls_mypy = {
@@ -1023,6 +1025,7 @@ require('lazy').setup({
         additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
+      fold = { enable = true },
     },
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
