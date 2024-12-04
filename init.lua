@@ -103,7 +103,7 @@ vim.opt.conceallevel = 2
 
 -- Make line numbers default
 vim.opt.number = true
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
 
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
@@ -200,6 +200,38 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 -- Add the key mapping for toggling nvim-tree
 vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<CR>', { desc = '[T]oggle Nvim [T]ree' })
+
+-- Enable Hebrew keymap
+vim.o.keymap = 'hebrew'
+vim.o.iminsert = 0
+vim.o.imsearch = 0
+
+-- Define Hebrew to English key mappings in normal mode
+vim.api.nvim_set_keymap('n', 'ש', 'a', { noremap = true })
+vim.api.nvim_set_keymap('n', 'נ', 'b', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ב', 'c', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ג', 'd', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ק', 'e', { noremap = true })
+vim.api.nvim_set_keymap('n', 'כ', 'f', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ע', 'g', { noremap = true })
+vim.api.nvim_set_keymap('n', 'י', 'h', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ן', 'i', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ח', 'j', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ל', 'k', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ך', 'l', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ף', ';', { noremap = true })
+vim.api.nvim_set_keymap('n', 'צ', 'm', { noremap = true })
+vim.api.nvim_set_keymap('n', 'מ', 'n', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ם', 'o', { noremap = true })
+vim.api.nvim_set_keymap('n', 'פ', 'p', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ר', 'r', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ד', 's', { noremap = true })
+vim.api.nvim_set_keymap('n', 'א', 't', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ו', 'u', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ה', 'v', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ס', 'x', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ט', 'y', { noremap = true })
+vim.api.nvim_set_keymap('n', 'ז', 'z', { noremap = true })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -764,6 +796,24 @@ require('lazy').setup({
         },
       }
 
+      -- Load Solargraph for Ruby
+      --  Solargraph is a Ruby language server that provides intellisense, code completion, etc.
+      require('lspconfig').solargraph.setup {
+        capabilities = capabilities,
+        settings = {
+          solargraph = {
+            diagnostics = true,
+            completion = true,
+            definitions = true,
+            hover = true,
+            references = true,
+            rename = true,
+            symbols = true,
+            codeAction = true,
+            formatting = true,
+          },
+        },
+      }
       -- Ensure the servers and tools above are installed
       --  To check the current status of installed tools and/or manually install
       --  other tools, you can run
