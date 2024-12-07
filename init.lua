@@ -544,7 +544,7 @@ require('lazy').setup({
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
-        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
+        -- You can pass additional configuration tkko Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
           previewer = false,
@@ -1173,3 +1173,8 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- CUSTOM PLUGINS
+package.path = package.path .. ';' .. vim.fn.stdpath 'config' .. '/lua/custom/plugins/?.lua'
+-- Load the telescope picker for switching tabs
+require 'tab_switcher'
