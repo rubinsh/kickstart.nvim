@@ -845,6 +845,8 @@ require('lazy').setup({
             codeAction = true,
             formatting = true,
             useBundler = false,
+            reporters = { 'rubocop' },
+            formatters = { 'rubocop' },
             checkGemVersion = false,
           },
         },
