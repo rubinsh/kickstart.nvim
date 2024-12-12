@@ -395,6 +395,11 @@ require('lazy').setup({
       -- see below for full list of optional dependencies 👇
     },
     opts = {
+      note_path_func = function(spec)
+        -- This is equivalent to the default behavior.
+        local path = spec.dir / tostring(spec.id .. '-' .. spec.title)
+        return path:with_suffix '.md'
+      end,
       workspaces = {
         {
           name = 'personal',
