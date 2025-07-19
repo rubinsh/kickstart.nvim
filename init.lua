@@ -286,20 +286,6 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   {
-    'lewis6991/gitsigns.nvim',
-    config = function()
-      require('gitsigns').setup {
-        signs = {
-          add = { text = '+' },
-          change = { text = '~' },
-          delete = { text = '_' },
-          topdelete = { text = '‾' },
-          changedelete = { text = '~' },
-        },
-      }
-    end,
-  },
-  {
     'nvim-tree/nvim-web-devicons',
     config = function()
       require('nvim-web-devicons').setup {
@@ -839,26 +825,26 @@ require('lazy').setup({
 
       -- Load Solargraph for Ruby
       --  Solargraph is a Ruby language server that provides intellisense, code completion, etc.
-      require('lspconfig').solargraph.setup {
-        capabilities = capabilities,
-        settings = {
-          solargraph = {
-            diagnostics = true,
-            completion = true,
-            definitions = true,
-            hover = true,
-            references = true,
-            rename = true,
-            symbols = true,
-            codeAction = true,
-            formatting = true,
-            useBundler = false,
-            reporters = { 'rubocop' },
-            formatters = { 'rubocop' },
-            checkGemVersion = false,
-          },
-        },
-      }
+      -- require('lspconfig').solargraph.setup {
+      --   capabilities = capabilities,
+      --   settings = {
+      --     solargraph = {
+      --       diagnostics = true,
+      --       completion = true,
+      --       definitions = true,
+      --       hover = true,
+      --       references = true,
+      --       rename = true,
+      --       symbols = true,
+      --       codeAction = true,
+      --       formatting = true,
+      --       useBundler = false,
+      --       reporters = { 'rubocop' },
+      --       formatters = { 'rubocop' },
+      --       checkGemVersion = false,
+      --     },
+      --   },
+      -- }
       -- Ensure the servers and tools above are installed
       --  To check the current status of installed tools and/or manually install
       --  other tools, you can run
@@ -1151,7 +1137,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
