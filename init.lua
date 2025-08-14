@@ -162,6 +162,14 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Set diff mode to use unified (inline) view instead of side-by-side
+vim.opt.diffopt:append 'internal'
+vim.opt.diffopt:append 'algorithm:histogram' -- Better algorithm for code (like Cursor uses)
+vim.opt.diffopt:append 'linematch:60'
+vim.opt.diffopt:append 'iwhite' -- Ignore whitespace changes
+vim.opt.diffopt:append 'indent-heuristic' -- Better diff alignment
+vim.opt.diffopt:append 'context:3' -- Show 3 lines of context
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -333,6 +341,123 @@ require('lazy').setup({
     end,
   },
   {
+    'sindrets/diffview.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      -- Customize fillchars for cleaner diff view
+      vim.opt.fillchars:append {
+        diff = ' ', -- Use space instead of deletion lines
+        eob = ' ', -- Hide ~ at end of buffer
+      }
+
+      require('diffview').setup {
+        diff_binaries = false,
+        enhanced_diff_hl = true,
+        use_icons = true,
+        signs = {
+          fold_closed = '',
+          fold_open = '',
+          done = '✓',
+        },
+        view = {
+          default = {
+            layout = 'diff2_horizontal', -- Keep split as default
+            winbar_info = true,
+            disable_win_separator = false,
+          },
+          merge_tool = {
+            layout = 'diff3_horizontal',
+            disable_diagnostics = true,
+            winbar_info = true,
+          },
+          file_history = {
+            layout = 'diff2_horizontal',
+            winbar_info = true,
+          },
+        },
+        file_panel = {
+          listing_style = 'tree',
+          tree_options = {
+            flatten_dirs = true,
+            folder_statuses = 'only_folded',
+          },
+          win_config = {
+            position = 'left',
+            width = 35,
+            win_opts = {},
+          },
+        },
+        file_history_panel = {
+          log_options = {
+            git = {
+              single_file = {
+                diff_merges = 'combined',
+              },
+              multi_file = {
+                diff_merges = 'first-parent',
+              },
+            },
+          },
+        },
+        commit_log_panel = {
+          win_config = {
+            win_opts = {},
+          },
+        },
+        default_args = {
+          DiffviewOpen = { '--untracked-files=no' },
+        },
+        hooks = {
+          diff_buf_read = function(bufnr)
+            -- Only apply to this specific diff buffer
+            vim.diagnostic.enable(false, { bufnr = bufnr }) -- New API for disabling diagnostics
+            -- Buffer-local options only
+            vim.bo[bufnr].textwidth = 0 -- Disable textwidth in diff
+            vim.bo[bufnr].modifiable = true
+          end,
+          diff_buf_win_enter = function(bufnr, winid, ctx)
+            -- Only apply to this specific diff window
+            if vim.api.nvim_win_is_valid(winid) then
+              -- Set window-local options for the diff window
+              vim.api.nvim_win_call(winid, function()
+                vim.wo.wrap = true
+                vim.wo.linebreak = true
+                vim.wo.breakindent = true
+                vim.wo.number = true -- Show line numbers in diff
+                vim.wo.relativenumber = false -- But not relative numbers
+                vim.wo.cursorline = true -- Enable cursorline for better navigation
+                -- vim.wo.showbreak = '↪ '
+              end)
+            end
+          end,
+        },
+        key_bindings = {
+          disable_defaults = false,
+        },
+      }
+
+      -- Set better highlight groups for diffs
+      vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#1a3a1a' })
+      vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#3a1a1a' })
+      vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#1a1a3a' })
+      vim.api.nvim_set_hl(0, 'DiffText', { bg = '#4a4a1a', bold = true }) -- Highlight actual changed text within line
+
+      -- Additional diffview-specific highlights for better word diffs
+      vim.api.nvim_set_hl(0, 'DiffviewDiffAddAsDelete', { bg = '#3a1a1a' })
+      vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', { bg = '#3a1a1a', strikethrough = true })
+    end,
+    keys = {
+      { '<leader>v', nil, desc = 'Diff[V]iew' },
+      { '<leader>vd', '<cmd>DiffviewOpen<cr>', desc = '[V]iew [D]iff (working changes)' },
+      { '<leader>vp', '<cmd>DiffviewOpen HEAD~1<cr>', desc = '[V]iew [P]revious commit diff' },
+      { '<leader>vf', '<cmd>DiffviewFileHistory %<cr>', desc = '[V]iew [F]ile history' },
+      { '<leader>vb', '<cmd>DiffviewFileHistory<cr>', desc = '[V]iew [B]ranch history' },
+      { '<leader>vc', '<cmd>DiffviewClose<cr>', desc = '[V]iew [C]lose' },
+      { '<leader>vr', '<cmd>DiffviewRefresh<cr>', desc = '[V]iew [R]efresh' },
+      { '<leader>vt', '<cmd>DiffviewToggleFiles<cr>', desc = '[V]iew [T]oggle file panel' },
+    },
+  },
+  {
     'NeogitOrg/neogit',
     dependencies = {
       'nvim-lua/plenary.nvim', -- required
@@ -465,6 +590,7 @@ require('lazy').setup({
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>v', group = 'Diff[V]iew' },
       }
     end,
   },
