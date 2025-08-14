@@ -304,9 +304,83 @@ require('lazy').setup({
     end,
   },
   {
+    'folke/snacks.nvim',
+    priority = 1000,
+    lazy = false,
+    config = function()
+      require('snacks').setup {
+        -- Enable the features you want
+        bigfile = { enabled = true },
+        notifier = { enabled = true },
+        quickfile = { enabled = true },
+        statuscolumn = { enabled = false }, -- You already have line numbers configured
+        words = { enabled = true },
+        terminal = {
+          enabled = true,
+          win = {
+            backdrop = 60,
+            height = 0.9,
+            width = 0.9,
+          },
+        },
+        input = {
+          enabled = true,  -- Floating input for vim.ui.input (renaming, etc)
+        },
+      }
+    end,
+    keys = {
+      {
+        '<leader>gg',
+        function()
+          Snacks.terminal.toggle('lazygit', { cwd = vim.fn.getcwd() })
+        end,
+        desc = 'Lazygit',
+      },
+      {
+        '<leader>gt',
+        function()
+          Snacks.terminal.toggle()
+        end,
+        desc = 'Toggle Terminal',
+      },
+    },
+  },
+  {
+    'folke/noice.nvim',
+    event = 'VeryLazy',
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+    },
+    opts = {
+      lsp = {
+        -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+        override = {
+          ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+          ['vim.lsp.util.stylize_markdown'] = true,
+          ['cmp.entry.get_documentation'] = true,
+        },
+      },
+      presets = {
+        bottom_search = false, -- use a classic bottom cmdline for search
+        command_palette = true, -- position the cmdline and popupmenu together in center
+        long_message_to_split = true, -- long messages will be sent to a split
+        inc_rename = false, -- enables an input dialog for inc-rename.nvim
+        lsp_doc_border = true, -- add a border to hover docs and signature help
+      },
+      cmdline = {
+        view = 'cmdline_popup', -- This makes the command line appear as a popup in the center
+        format = {
+          cmdline = { icon = '>' },
+          search_down = { icon = '/' },
+          search_up = { icon = '?' },
+        },
+      },
+    },
+  },
+  {
     'coder/claudecode.nvim',
     dependencies = { 'folke/snacks.nvim' },
-    config = true,
+    config = true, -- Just use default config
     keys = {
       { '<leader>a', nil, desc = 'AI/Claude Code' },
       { '<leader>ac', '<cmd>ClaudeCode<cr>', desc = 'Toggle Claude' },
@@ -436,15 +510,19 @@ require('lazy').setup({
         },
       }
 
-      -- Set better highlight groups for diffs
-      vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#1a3a1a' })
-      vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#3a1a1a' })
-      vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#1a1a3a' })
-      vim.api.nvim_set_hl(0, 'DiffText', { bg = '#4a4a1a', bold = true }) -- Highlight actual changed text within line
+      -- Clean, subtle diff colors inspired by modern Git UIs
+      vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#1a2f38' }) -- Very subtle teal for added lines
+      vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#2d1f2f' }) -- Very subtle red for deleted lines
+      vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#1f2d3a' }) -- Very subtle blue for changed lines
+      vim.api.nvim_set_hl(0, 'DiffText', { bg = '#3d2c5e', bold = true }) -- Purple highlight for word changes (no clash with blue syntax)
 
-      -- Additional diffview-specific highlights for better word diffs
-      vim.api.nvim_set_hl(0, 'DiffviewDiffAddAsDelete', { bg = '#3a1a1a' })
-      vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', { bg = '#3a1a1a', strikethrough = true })
+      -- Additional diffview-specific highlights
+      vim.api.nvim_set_hl(0, 'DiffviewDiffAddAsDelete', { bg = '#2d1f2f' })
+      vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', { bg = '#2d1f2f', strikethrough = true })
+
+      -- For inline added/removed text within changed lines
+      vim.api.nvim_set_hl(0, 'DiffviewDiffAdd', { bg = '#1e3a47' }) -- Inline additions
+      vim.api.nvim_set_hl(0, 'DiffviewDiffDeleteDim', { fg = '#565f89' }) -- Dimmed deleted text
     end,
     keys = {
       { '<leader>v', nil, desc = 'Diff[V]iew' },
