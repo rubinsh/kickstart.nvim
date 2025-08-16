@@ -632,6 +632,16 @@ require('lazy').setup({
 
       -- see below for full list of optional dependencies 👇
     },
+    keys = {
+      { '<leader>ob', '<cmd>ObsidianBacklinks<cr>', desc = '[O]bsidian [B]acklinks' },
+      { '<leader>os', '<cmd>ObsidianSearch<cr>', desc = '[O]bsidian [S]earch' },
+      { '<leader>oq', '<cmd>ObsidianQuickSwitch<cr>', desc = '[O]bsidian [Q]uick switch' },
+      { '<leader>on', '<cmd>ObsidianNew<cr>', desc = '[O]bsidian [N]ew note' },
+      { '<leader>ot', '<cmd>ObsidianToday<cr>', desc = '[O]bsidian [T]oday' },
+      { '<leader>oy', '<cmd>ObsidianYesterday<cr>', desc = '[O]bsidian [Y]esterday' },
+      { '<leader>oo', '<cmd>ObsidianOpen<cr>', desc = '[O]bsidian [O]pen in app' },
+      { '<leader>ol', '<cmd>ObsidianLinks<cr>', desc = '[O]bsidian [L]inks in current buffer' },
+    },
     opts = {
       note_path_func = function(spec)
         -- This is equivalent to the default behavior.
