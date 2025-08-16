@@ -98,8 +98,7 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
--- Setup Conceal level for Obsidian plugin
-vim.opt.conceallevel = 2
+-- Setup Conceal level for Obsidian plugin (moved to autocmd below)
 
 -- Make line numbers default
 vim.opt.number = true
@@ -255,6 +254,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- -- Set conceallevel for markdown files (Obsidian)
+-- vim.api.nvim_create_autocmd('FileType', {
+--   pattern = 'markdown',
+--   callback = function()
+--     vim.opt_local.conceallevel = 1  -- Use 1 instead of 2 to show checkbox markers
+--     vim.opt_local.concealcursor = 'nc'  -- Don't conceal in insert mode
+--   end,
+-- })
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -324,7 +332,7 @@ require('lazy').setup({
           },
         },
         input = {
-          enabled = true,  -- Floating input for vim.ui.input (renaming, etc)
+          enabled = true, -- Floating input for vim.ui.input (renaming, etc)
         },
       }
     end,
@@ -375,6 +383,19 @@ require('lazy').setup({
           search_up = { icon = '?' },
         },
       },
+      -- views = {
+      --   cmdline_popup = {
+      --     border = {
+      --       style = 'single', -- No rounded borders for command palette
+      --     },
+      --   },
+      -- },
+      -- -- Force messages to use mini view with less truncation
+      -- messages = {
+      --   view = 'mini',
+      --   view_error = 'mini',
+      --   view_warn = 'mini',
+      -- },
     },
   },
   {
@@ -383,17 +404,18 @@ require('lazy').setup({
     config = true, -- Just use default config
     keys = {
       { '<leader>a', nil, desc = 'AI/Claude Code' },
+      { '<leader>as', '<cmd>ClaudeCodeStart<cr>', desc = 'Start Claude server (background)' },
       { '<leader>ac', '<cmd>ClaudeCode<cr>', desc = 'Toggle Claude' },
       { '<leader>af', '<cmd>ClaudeCodeFocus<cr>', desc = 'Focus Claude' },
       { '<leader>ar', '<cmd>ClaudeCode --resume<cr>', desc = 'Resume Claude' },
       { '<leader>aC', '<cmd>ClaudeCode --continue<cr>', desc = 'Continue Claude' },
       { '<leader>am', '<cmd>ClaudeCodeSelectModel<cr>', desc = 'Select Claude model' },
       { '<leader>ab', '<cmd>ClaudeCodeAdd %<cr>', desc = 'Add current buffer' },
-      { '<leader>as', '<cmd>ClaudeCodeSend<cr>', mode = 'v', desc = 'Send to Claude' },
+      { '<leader>aS', '<cmd>ClaudeCodeSend<cr>', mode = 'v', desc = 'Send selection to Claude' },
       {
-        '<leader>as',
+        '<leader>at',
         '<cmd>ClaudeCodeTreeAdd<cr>',
-        desc = 'Add file',
+        desc = 'Add file from tree',
         ft = { 'NvimTree', 'neo-tree', 'oil', 'minifiles' },
       },
       -- Diff management
@@ -557,7 +579,7 @@ require('lazy').setup({
     },
     opts = {
       debug = false, -- Enable debugging
-      model = 'gpt-4o',
+      model = 'gpt-5',
       -- See Configuration section for rest
     },
     -- See Commands section for default commands if you want to lazy load on them
@@ -633,6 +655,10 @@ require('lazy').setup({
           name = 'personal',
           path = os.getenv 'OBSIDIAN_VAULT_PATH',
         },
+      },
+      -- Disable UI to prevent conflicts with render-markdown.nvim
+      ui = {
+        enable = false, -- Let render-markdown handle the checkbox rendering
       },
 
       -- see below for full list of options 👇
