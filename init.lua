@@ -254,15 +254,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- -- Set conceallevel for markdown files (Obsidian)
--- vim.api.nvim_create_autocmd('FileType', {
---   pattern = 'markdown',
---   callback = function()
---     vim.opt_local.conceallevel = 1  -- Use 1 instead of 2 to show checkbox markers
---     vim.opt_local.concealcursor = 'nc'  -- Don't conceal in insert mode
---   end,
--- })
-
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -660,6 +651,8 @@ require('lazy').setup({
       ui = {
         enable = false, -- Let render-markdown handle the checkbox rendering
       },
+      -- Disable automatic frontmatter generation
+      disable_frontmatter = true,
 
       -- see below for full list of options 👇
     },
