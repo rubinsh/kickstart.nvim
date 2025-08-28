@@ -327,6 +327,13 @@ require('lazy').setup({
         input = {
           enabled = true, -- Floating input for vim.ui.input (renaming, etc)
         },
+        scroll = {
+          enabled = true,
+          animate = {
+            duration = { step = 15, total = 250 },
+            easing = 'linear',
+          },
+        },
       }
     end,
     keys = {
