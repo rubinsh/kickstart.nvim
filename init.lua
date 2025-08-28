@@ -161,6 +161,12 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Enable line wrapping by default
+vim.opt.wrap = true
+vim.opt.linebreak = true -- Wrap at word boundaries
+vim.opt.breakindent = true -- Preserve indentation in wrapped text
+vim.opt.showbreak = '↪ ' -- Show a character at the beginning of wrapped lines
+
 -- Set diff mode to use unified (inline) view instead of side-by-side
 vim.opt.diffopt:append 'internal'
 vim.opt.diffopt:append 'algorithm:histogram' -- Better algorithm for code (like Cursor uses)
@@ -210,6 +216,16 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- Add the key mapping for toggling nvim-tree
 vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<CR>', { desc = '[T]oggle Nvim [T]ree' })
 
+-- Add key mapping to toggle wrap
+vim.keymap.set('n', '<leader>tw', function()
+  vim.wo.wrap = not vim.wo.wrap
+  if vim.wo.wrap then
+    vim.notify('Wrap enabled')
+  else
+    vim.notify('Wrap disabled')
+  end
+end, { desc = '[T]oggle [W]rap' })
+
 -- Enable Hebrew keymap
 vim.o.keymap = 'hebrew'
 vim.o.iminsert = 0
@@ -253,6 +269,22 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
+  end,
+})
+
+-- Force line wrapping to be enabled on all buffers
+vim.api.nvim_create_autocmd({ 'BufWinEnter', 'WinNew' }, {
+  desc = 'Enable line wrapping for all buffers',
+  group = vim.api.nvim_create_augroup('force-wrap', { clear = true }),
+  callback = function()
+    -- Use defer_fn to ensure it runs after plugin hooks
+    vim.defer_fn(function()
+      if vim.api.nvim_win_is_valid(0) then
+        vim.wo.wrap = true
+        vim.wo.linebreak = true
+        vim.wo.breakindent = true
+      end
+    end, 50) -- 50ms delay to ensure plugins have finished their setup
   end,
 })
 
