@@ -220,9 +220,9 @@ vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<CR>', { desc = '[T]oggle 
 vim.keymap.set('n', '<leader>tw', function()
   vim.wo.wrap = not vim.wo.wrap
   if vim.wo.wrap then
-    vim.notify('Wrap enabled')
+    vim.notify 'Wrap enabled'
   else
-    vim.notify('Wrap disabled')
+    vim.notify 'Wrap disabled'
   end
 end, { desc = '[T]oggle [W]rap' })
 
@@ -434,6 +434,7 @@ require('lazy').setup({
     'coder/claudecode.nvim',
     dependencies = { 'folke/snacks.nvim' },
     config = true, -- Just use default config
+    lazy = false, -- Load immediately
     keys = {
       { '<leader>a', nil, desc = 'AI/Claude Code' },
       { '<leader>as', '<cmd>ClaudeCodeStart<cr>', desc = 'Start Claude server (background)' },
@@ -1172,18 +1173,58 @@ require('lazy').setup({
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
+        ensure_installed = { 'vtsls', 'vue_ls' }, -- Install both servers
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
+            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+
+            -- Handle tsserver -> ts_ls rename (keep for backward compatibility)
             if server_name == 'tsserver' then
               server_name = 'ts_ls'
             end
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+
+            -- Skip vtsls and vue-language-server as we'll configure them specially
+            if server_name == 'vtsls' or server_name == 'vue_ls' then
+              return
+            end
+
             require('lspconfig')[server_name].setup(server)
           end,
+        },
+      }
+
+      -- Configure vtsls with Vue TypeScript plugin for full Vue support
+      local vue_typescript_plugin = vim.fn.stdpath 'data' .. '/mason/packages/vue-language-server/node_modules/@vue/language-server'
+
+      require('lspconfig').vtsls.setup {
+        filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+        capabilities = capabilities,
+        settings = {
+          complete_function_calls = true,
+          vtsls = {
+            enableMoveToFileCodeAction = true,
+            tsserver = {
+              globalPlugins = {
+                {
+                  name = '@vue/typescript-plugin',
+                  location = vue_typescript_plugin,
+                  languages = { 'javascript', 'typescript', 'vue' },
+                },
+              },
+            },
+          },
+          typescript = {
+            updateImportsOnFileMove = { enabled = 'always' },
+            inlayHints = {
+              parameterNames = { enabled = 'all' },
+              parameterTypes = { enabled = true },
+              variableTypes = { enabled = true },
+              propertyDeclarationTypes = { enabled = true },
+              functionLikeReturnTypes = { enabled = true },
+              enumMemberValues = { enabled = true },
+            },
+          },
         },
       }
     end,
