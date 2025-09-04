@@ -980,7 +980,7 @@ require('lazy').setup({
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
 
           -- Find references for the word under your cursor.
           map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
@@ -1179,13 +1179,13 @@ require('lazy').setup({
             local server = servers[server_name] or {}
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
 
-            -- Handle tsserver -> ts_ls rename (keep for backward compatibility)
-            if server_name == 'tsserver' then
-              server_name = 'ts_ls'
-            end
-
-            -- Skip vtsls and vue-language-server as we'll configure them specially
-            if server_name == 'vtsls' or server_name == 'vue_ls' then
+            -- Skip vtsls and vue_ls as we'll configure them specially
+            -- Also skip ts_ls, tsserver, and typescript-language-server since we're using vtsls instead
+            if server_name == 'vtsls' 
+               or server_name == 'vue_ls' 
+               or server_name == 'ts_ls' 
+               or server_name == 'tsserver'
+               or server_name == 'typescript-language-server' then
               return
             end
 
