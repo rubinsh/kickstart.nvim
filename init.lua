@@ -543,6 +543,14 @@ require('lazy').setup({
             -- Buffer-local options only
             vim.bo[bufnr].textwidth = 0 -- Disable textwidth in diff
             vim.bo[bufnr].modifiable = true
+            
+            -- Detach vtsls from diff buffers to prevent documentHighlight errors
+            vim.schedule(function()
+              local clients = vim.lsp.get_clients({ bufnr = bufnr, name = 'vtsls' })
+              for _, client in ipairs(clients) do
+                vim.lsp.buf_detach_client(bufnr, client.id)
+              end
+            end)
           end,
           diff_buf_win_enter = function(bufnr, winid, ctx)
             -- Only apply to this specific diff window
